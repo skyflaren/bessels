@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+    <title>scatter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+    <script src="utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" src="styles.css">
+</head>
+<body onload="init()" style="background-color: rgb(26, 26, 26)">
+    <div>
+        <canvas id="myChart" style="margin: 50px"></canvas>
+    </div>
+
+    
+    <script>
+        var myChart;
+        var populationSize = 500, max = 10, cnt = 1, factor = 0, trials = 500, stop = false, popVariance;
+        var popData = new Array(populationSize), points = new Array(23), popVarianceArr = new Array(26);
+
+
+        function rand(mx) { // return random number from 0 to mx
+          return Math.floor(Math.random() * mx);
+        }
+
+
+        function calcVariance(sum, n, data, factor){
+            var avg = sum/n, variance = 0;
+            for(var j = 0; j < n; j++) variance += Math.pow(data[j]-avg, 2);
+            return variance/(n-factor);
+        }
+
+
+        function setPopulation(){
+            var sum = 0;
+            for(var i = 0; i < populationSize; i++){ // create random population, and calculate population variance
+                popData[i] = rand(max); 
+                sum += popData[i];
+            }
+            popVariance = calcVariance(sum, populationSize, popData, 0);
+            console.log(popVariance)
+
+            for(var n = 2; n <= 25; n++){ // define points for graph
+                points[n-2] = new Array(2);
+                points[n-2][0] = n;
+                points[n-2][1] = 0;
+
+                popVarianceArr[n-2] = new Array(2);
+                popVarianceArr[n-2][0] = n-2;
+                popVarianceArr[n-2][1] = popVariance;
+            }
+            popVarianceArr[24] = new Array(2); popVarianceArr[24][0] = 24; popVarianceArr[24][1] = popVariance;
+            popVarianceArr[25] = new Array(2); popVarianceArr[25][0] = 25; popVarianceArr[25][1] = popVariance;
+        }
+
+
+        // newTrial(): run a new trial for each sample size
+        function newTrial(){
+            cnt++;
+            for(var n = 2; n <= 25; n++){
+                var tmp = new Array (n), sum = 0;
+                for(var j = 0; j < n; j++){
+                    tmp[j] = popData[rand(500)];
+                    sum += tmp[j];
+                }
+                points[n-2][1] = (points[n-2][1]*(cnt-1) + calcVariance(sum, n, tmp, factor))/cnt;
+            }
+                console.log(points[3][1] + " " + cnt)
+        }
+
+
+        // loop(): gradually run all trial, and update the graph to show the average variances
+        function loop(){
+            var animation = setInterval(function nest(){
+
+                newTrial();
+
+                myChart.data.datasets.forEach(function(dataset, index) {
+                    if(dataset.data.label == "Sample Variance") dataset.data = points;
+                    else if(dataset.data.label == "Population Variance") dataset.data = popVarianceArr;
+                });
+
+                myChart.update();
+                if(cnt == trials) clearInterval(animation);
+            }, 30);
+        }
+
+
+        // init(): start program
+        function init(){
+            setPopulation();
+            const ctx = document.getElementById('myChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Sample Variance',
+                        backgroundColor: 'rgb(1, 184, 141)',
+                        borderColor: 'rgb(1, 184, 141)',
+                        data: points,
+                        pointRadius: 5,
+                        pointHoverRadius: 7.5,
+                    },
+                    {
+                        label: 'Population Variance',
+                        backgroundColor: 'rgb(244, 156, 19)',
+                        borderColor: 'rgb(244, 156, 19)',
+                        data: popVarianceArr,
+                        pointRadius: 25,
+                        pointHoverRadius: 25,
+                        pointStyle: 'dash',
+                    }]
+                },
+                options: {
+                    animationSteps: 30,
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Bessels Correction Demo',
+                    },
+                    scales: {
+                        x: {
+                            min: 1,
+                            max: 26,
+                            grid: {
+                                display: true,
+                                color: "rgb(55, 55, 55)",
+                                lineWidth: "2",
+                            },
+                            ticks: {
+                                color: "white",
+                            },
+                            title: "Sample size (n)",
+                        },
+                        y: {
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            grid: {
+                                display: true,
+                                color: "rgb(55, 55, 55)",
+                                lineWidth: "2",
+                            },
+                            ticks: {
+                                color: "white",
+                            },
+                            title: {
+                                text: "Variance",
+                                color: "white",
+                            }
+                        },
+                    }
+                }
+            });
+            loop();
+        }
+    </script>
+</body>
+</html>
