@@ -107,3 +107,7 @@ span{
     padding: 7px;
     margin-top: 5px;
 }
+
+.button:hover{
+    cursor: pointer;
+}
