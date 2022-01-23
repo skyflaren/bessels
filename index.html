@@ -3,19 +3,30 @@
 <head>
     <title>scatter</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
-    <script src="utils.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" src="styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body onload="init()" style="background-color: rgb(26, 26, 26)">
-    <div>
-        <canvas id="myChart" style="margin: 50px"></canvas>
+<body onload="init()">
+    <div class="wrapper">
+        <span class="title">Bessel's Correction: Demo</span>
+        <canvas id="chart" style=""></canvas>
+        <div class="options-form">
+            <span class="instruct">Options</span>
+            <hr>
+            <div class="input">
+                <span class="label">Divide by: N -</span>
+                <textarea name="inputted_text" cols="40" rows="1" required="" id="id_inputted_factor">0</textarea>
+            </div>
+            <div class="input">
+                <input class="button" type="submit" value="Simulate!" onclick="init()">
+            </div>
+        </div>
     </div>
-
-    
     <script>
-        var myChart;
-        var populationSize = 500, max = 10, cnt = 1, factor = 0, trials = 500, stop = false, popVariance;
+        var chart;
+        // var populationSize = 500, max = 10, cnt = 1, factor = 0, trials = 500, stop = false, popVariance;
+        var populationSize, max, cnt, factor, trials, stop, popVariance;
         var popData = new Array(populationSize), points = new Array(23), popVarianceArr = new Array(26);
 
 
@@ -33,12 +44,14 @@
 
         function setPopulation(){
             var sum = 0;
+            populationSize = 500, max = 10, cnt = 1, factor = $('#id_inputted_factor').val(), trials = 500, stop = false, popVariance;
+// factor = document.getElementById('id_inputted_factor').value
             for(var i = 0; i < populationSize; i++){ // create random population, and calculate population variance
                 popData[i] = rand(max); 
                 sum += popData[i];
             }
             popVariance = calcVariance(sum, populationSize, popData, 0);
-            console.log(popVariance)
+            // console.log(factor);
 
             for(var n = 2; n <= 25; n++){ // define points for graph
                 points[n-2] = new Array(2);
@@ -65,7 +78,7 @@
                 }
                 points[n-2][1] = (points[n-2][1]*(cnt-1) + calcVariance(sum, n, tmp, factor))/cnt;
             }
-                console.log(points[3][1] + " " + cnt)
+                // console.log(points[3][1] + " " + cnt)
         }
 
 
@@ -75,12 +88,12 @@
 
                 newTrial();
 
-                myChart.data.datasets.forEach(function(dataset, index) {
+                chart.data.datasets.forEach(function(dataset, index) {
                     if(dataset.data.label == "Sample Variance") dataset.data = points;
                     else if(dataset.data.label == "Population Variance") dataset.data = popVarianceArr;
                 });
 
-                myChart.update();
+                chart.update();
                 if(cnt == trials) clearInterval(animation);
             }, 30);
         }
@@ -89,8 +102,10 @@
         // init(): start program
         function init(){
             setPopulation();
-            const ctx = document.getElementById('myChart').getContext('2d');
-            myChart = new Chart(ctx, {
+
+            if(chart != null) chart.destroy()  
+            const ctx = document.getElementById('chart').getContext('2d');
+            chart = new Chart(ctx, {
                 type: 'scatter',
                 data: {
                     datasets: [{

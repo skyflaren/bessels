@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap');
+
+:root{
+    --light-grey: rgb(232, 232, 232);
+    --grid-grey: rgb(55, 55, 55);
+    --green: rgb(1, 184, 141);
+    --orange: rgb(244, 156, 19);
+}
+
+body {
+    background-color: rgb(26, 26, 26);
+    font-family: 'Roboto', sans-serif;
+}
+
+.wrapper{
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1000px;
+}
+
+.title{
+    font-weight: bold;
+    font-size: 30px;
+    margin: auto;
+    margin-top: 40px;
+    /*text-decoration: underline;*/
+}
+
+#chart{
+    margin-top: 15px;
+    width: 100%;
+}
+
+.options-form{
+    margin-top: 40px;
+    color: white;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+hr{
+    border: none;
+    width: 500px;
+    opacity: 0.4;
+    height: 2px;
+    margin-top: 10px;
+    background-color: var(--grid-grey);
+}
+
+span{
+    color: var(--light-grey);
+}
+
+.instruct{
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.input{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 8px 0px;
+}
+
+.input > textarea{
+    background-color: var(--grid-grey);
+    border: none;
+    margin-left: 5px;
+    width: 200px;
+    color: white;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 2.5px;
+    padding: 3px 5px;
+}
+
+.button{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    background-color: var(--green);
+    border: none;
+    border-radius: 2.5px;
+    padding: 7px;
+}
