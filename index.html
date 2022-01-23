@@ -1,12 +1,13 @@
 <!doctype html>
 <html>
 <head>
-    <title>scatter</title>
+    <title>Bessel's Correction: Demo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body onload="init()">
     <div class="wrapper">
         <span class="title white">Bessel's Correction: Demo</span>
@@ -32,33 +33,34 @@
             </div>
         </div>
     </div>
+
     <script>
         var chart;
-        var populationSize, max, cnt, divideByNMinus, trials, stop, popVariance, popData, points, popVarianceArr;
+        var divideByNMinus, populationSize, trials, maxVal, popVariance, cnt;
         var popData = new Array(populationSize), points = new Array(23), popVarianceArr = new Array(26);
 
-
-        function rand(mx) { // return random number from 0 to mx
+        // Generate a random number from 0 to mx
+        function rand(mx) { 
           return Math.floor(Math.random() * mx);
         }
 
-
+        // Calculate the variance of a data set
         function calcVariance(sum, n, data, divideByNMinus){
             var avg = sum/n, variance = 0;
             for(var j = 0; j < n; j++) variance += Math.pow(data[j]-avg, 2);
             return variance/(n-divideByNMinus);
         }
 
-
+        // Reset paramaters of the data
         function resetPopulation(){
             populationSize = $('#pop_size').val(), divideByNMinus = $('#divideByNMinus').val(), trials = $('#trials').val();    // Get new variables
             
             popData = new Array(populationSize), points = new Array(23), popVarianceArr = new Array(26);    // Reset variables
-            max = 10, cnt = 1, stop = false, popVariance = 0;
+            maxVal = 10, cnt = 1, popVariance = 0;
             var sum = 0;
 
             for(var i = 0; i < populationSize; i++){ // create random population, and calculate population variance
-                popData[i] = rand(max); 
+                popData[i] = rand(maxVal); 
                 sum += popData[i];
             }
             popVariance = calcVariance(sum, populationSize, popData, 0);
@@ -77,7 +79,7 @@
         }
 
 
-        // newTrial(): run a new trial for each sample size
+        // Run a new trial for each sample size
         function newTrial(){
             cnt++;
             for(var n = 2; n <= 25; n++){
@@ -91,7 +93,7 @@
         }
 
 
-        // loop(): gradually run all trial, and update the graph to show the average variances
+        // Gradually run all trials, and update the graph to show the average variances
         function loop(){
             var animation = setInterval(function nest(){
 
@@ -108,7 +110,7 @@
         }
 
 
-        // init(): start program
+        // Start the program over
         function init(){
             resetPopulation();
 
