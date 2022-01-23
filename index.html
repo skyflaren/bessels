@@ -15,8 +15,16 @@
             <span class="instruct">Options</span>
             <hr>
             <div class="input">
-                <span class="label">Divide by: N -</span>
-                <textarea name="inputted_text" cols="40" rows="1" required="" id="id_inputted_factor">0</textarea>
+                <span class="label">Divide by <span class="grey">//</span> <span class="orange">N - </span></span>
+                <textarea name="inputted_text" cols="40" rows="1" required="" id="divideByNMinus">0</textarea>
+            </div>
+            <div class="input">
+                <span class="label">Population Size <span class="grey">//</span> </span></span>
+                <textarea name="inputted_text" cols="40" rows="1" required="" id="pop_size">500</textarea>
+            </div>
+            <div class="input">
+                <span class="label"># of Trials <span class="grey">//</span> </span></span>
+                <textarea name="inputted_text" cols="40" rows="1" required="" id="trials">500</textarea>
             </div>
             <div class="input">
                 <input class="button" type="submit" value="Simulate!" onclick="init()">
@@ -25,8 +33,7 @@
     </div>
     <script>
         var chart;
-        // var populationSize = 500, max = 10, cnt = 1, factor = 0, trials = 500, stop = false, popVariance;
-        var populationSize, max, cnt, factor, trials, stop, popVariance;
+        var populationSize, max, cnt, divideByNMinus, trials, stop, popVariance, popData, points, popVarianceArr;
         var popData = new Array(populationSize), points = new Array(23), popVarianceArr = new Array(26);
 
 
@@ -35,23 +42,25 @@
         }
 
 
-        function calcVariance(sum, n, data, factor){
+        function calcVariance(sum, n, data, divideByNMinus){
             var avg = sum/n, variance = 0;
             for(var j = 0; j < n; j++) variance += Math.pow(data[j]-avg, 2);
-            return variance/(n-factor);
+            return variance/(n-divideByNMinus);
         }
 
 
-        function setPopulation(){
+        function resetPopulation(){
+            populationSize = $('#pop_size').val(), divideByNMinus = $('#divideByNMinus').val(), trials = $('#trials').val();    // Get new variables
+            
+            popData = new Array(populationSize), points = new Array(23), popVarianceArr = new Array(26);    // Reset variables
+            max = 10, cnt = 1, stop = false, popVariance = 0;
             var sum = 0;
-            populationSize = 500, max = 10, cnt = 1, factor = $('#id_inputted_factor').val(), trials = 500, stop = false, popVariance;
-// factor = document.getElementById('id_inputted_factor').value
+
             for(var i = 0; i < populationSize; i++){ // create random population, and calculate population variance
                 popData[i] = rand(max); 
                 sum += popData[i];
             }
             popVariance = calcVariance(sum, populationSize, popData, 0);
-            // console.log(factor);
 
             for(var n = 2; n <= 25; n++){ // define points for graph
                 points[n-2] = new Array(2);
@@ -73,12 +82,11 @@
             for(var n = 2; n <= 25; n++){
                 var tmp = new Array (n), sum = 0;
                 for(var j = 0; j < n; j++){
-                    tmp[j] = popData[rand(500)];
+                    tmp[j] = popData[rand(populationSize)];
                     sum += tmp[j];
                 }
-                points[n-2][1] = (points[n-2][1]*(cnt-1) + calcVariance(sum, n, tmp, factor))/cnt;
+                points[n-2][1] = (points[n-2][1]*(cnt-1) + calcVariance(sum, n, tmp, divideByNMinus))/cnt;
             }
-                // console.log(points[3][1] + " " + cnt)
         }
 
 
@@ -101,9 +109,10 @@
 
         // init(): start program
         function init(){
-            setPopulation();
+            resetPopulation();
 
-            if(chart != null) chart.destroy()  
+            if(chart != null){ chart.destroy(); console.log("reset " + popVariance); }
+
             const ctx = document.getElementById('chart').getContext('2d');
             chart = new Chart(ctx, {
                 type: 'scatter',
