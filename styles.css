@@ -5,12 +5,13 @@
     --label-grey: rgb(120, 120, 120);
     --grid-grey: rgb(55, 55, 55);
     --dark-grey: rgb(40, 40, 40);
+    --bg-grey: rgb(26, 26, 26);
     --green: rgb(1, 184, 141);
     --orange: rgb(244, 156, 19);
 }
 
 body {
-    background-color: rgb(26, 26, 26);
+    background-color: var(--bg-grey);
     font-family: 'Roboto', sans-serif;
 }
 
@@ -27,7 +28,7 @@ body {
     font-weight: bold;
     font-size: 30px;
     margin: auto;
-    margin-top: 40px;
+    margin-top: 50px;
     /*text-decoration: underline;*/
 }
 
@@ -52,7 +53,8 @@ body {
 
 hr{
     border: none;
-    width: 500px;
+    width: 90%;
+    max-width: 500px;
     height: 2px;
     margin-top: 10px;
     background-color: var(--dark-grey);
@@ -101,7 +103,9 @@ span{
 .button{
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
+    font-size: 16px;
     background-color: var(--green);
+    color: var(--bg-grey);
     border: none;
     border-radius: 2.5px;
     padding: 7px;
